@@ -2,9 +2,11 @@
 
 **Topic:** Secure Software Design & Development  
 **Platform:** Flask (Python) Web Application  
-**Author:** [Yasra Khan  / CR-22005]
-            [Barira Tariq / CR-22017]
-            [Aleeza Mehmood / CR-22024]
+**Authors:** 
+
+- Yasra Khan (CR-22005)
+- Barira Tariq (CR-22017)
+- Aleeza Mehmood (CR-22024)
 ---
 
 ## 1. Project Overview

@@ -1,10 +1,10 @@
-# Secure Student Portal — Final Year Security Project
+# Secure Student Portal — Complex Computing Activity
 
-**Submission Deadline:** May 17, 2026  
 **Topic:** Secure Software Design & Development  
 **Platform:** Flask (Python) Web Application  
-**Author:** [Your Name / Student ID]
-
+**Author:** [Yasra Khan  / CR-22005]
+            [Barira Tariq / CR-22017]
+            [Aleeza Mehmood / CR-22024]
 ---
 
 ## 1. Project Overview

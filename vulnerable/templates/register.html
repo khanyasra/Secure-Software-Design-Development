@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Register — Vulnerable Portal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#0b0f1a;--card:#111827;--border:#1f2d45;--accent:#f97316;--accent2:#fb923c;--text:#e2e8f0;--muted:#64748b;--danger:#ef4444;--warn-bg:#2d1a00;--warn-border:#f97316;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem;}
+    .wrapper{width:100%;max-width:460px;}
+    .badge{display:inline-block;background:var(--warn-bg);border:1px solid var(--warn-border);color:var(--accent);font-size:0.65rem;letter-spacing:.15em;text-transform:uppercase;padding:.3rem .75rem;border-radius:2px;margin-bottom:1.5rem;}
+    h1{font-family:'Syne',sans-serif;font-weight:800;font-size:1.8rem;margin-bottom:.3rem;}
+    h1 span{color:var(--accent);}
+    .subtitle{color:var(--muted);font-size:.78rem;margin-bottom:2rem;}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:2rem;}
+    .field{margin-bottom:1.1rem;}
+    label{display:block;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:.35rem;}
+    input,textarea{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:.65rem .85rem;border-radius:4px;font-family:'DM Mono',monospace;font-size:.88rem;outline:none;transition:border-color .2s;}
+    textarea{resize:vertical;min-height:80px;}
+    input:focus,textarea:focus{border-color:var(--accent);}
+    .btn{width:100%;background:var(--accent);color:#000;border:none;padding:.75rem;border-radius:4px;font-family:'Syne',sans-serif;font-weight:700;font-size:.95rem;cursor:pointer;transition:background .2s;margin-top:.5rem;}
+    .btn:hover{background:var(--accent2);}
+    .error{background:rgba(239,68,68,.1);border:1px solid var(--danger);color:var(--danger);padding:.65rem .85rem;border-radius:4px;font-size:.8rem;margin-bottom:1.2rem;}
+    .link-row{text-align:center;margin-top:1.2rem;font-size:.78rem;color:var(--muted);}
+    .link-row a{color:var(--accent);text-decoration:none;}
+    .hint{margin-top:1.5rem;background:var(--warn-bg);border:1px solid var(--warn-border);border-radius:6px;padding:1rem;font-size:.72rem;color:var(--accent2);line-height:1.7;}
+    .hint strong{display:block;font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;margin-bottom:.4rem;color:var(--accent);}
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="badge">⚠ Vulnerable Version</div>
+    <h1>Create <span>Account</span></h1>
+    <p class="subtitle">Register for the Student Portal</p>
+
+    <div class="card">
+      {% if error %}<div class="error">{{ error }}</div>{% endif %}
+
+      <form method="POST">
+        <div class="field">
+          <label>Full Name</label>
+          <input type="text" name="fullname" placeholder="Jane Doe" required>
+        </div>
+        <div class="field">
+          <label>Username</label>
+          <input type="text" name="username" placeholder="jdoe" required>
+        </div>
+        <div class="field">
+          <label>Email</label>
+          <input type="email" name="email" placeholder="jane@uni.edu" required>
+        </div>
+        <div class="field">
+          <label>Password</label>
+          <input type="password" name="password" placeholder="Choose password" required>
+        </div>
+        <div class="field">
+          <label>Bio (XSS field ⚠)</label>
+          <!-- NO sanitisation — XSS payload stored directly -->
+          <textarea name="bio" placeholder='Try: &lt;script&gt;alert("XSS!")&lt;/script&gt;'></textarea>
+        </div>
+        <button class="btn" type="submit">Register</button>
+      </form>
+
+      <div class="link-row">Already have an account? <a href="/login">Sign In</a></div>
+    </div>
+
+    <div class="hint">
+      <strong>💀 Stored XSS Demo</strong>
+      Paste in Bio field:<br>
+      <code>&lt;script&gt;alert('XSS: '+document.cookie)&lt;/script&gt;</code><br>
+      → Script executes for every visitor viewing the profile
+    </div>
+  </div>
+</body>
+</html>

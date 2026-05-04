@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Profile — Vulnerable Portal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#0b0f1a;--card:#111827;--border:#1f2d45;--accent:#f97316;--text:#e2e8f0;--muted:#64748b;--warn-bg:#2d1a00;--warn-border:#f97316;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;min-height:100vh;padding:2rem;}
+    .topbar{display:flex;justify-content:space-between;align-items:center;max-width:700px;margin:0 auto 2rem;}
+    .topbar h2{font-family:'Syne',sans-serif;font-weight:800;font-size:1.3rem;}
+    .topbar h2 span{color:var(--accent);}
+    .badge{display:inline-block;background:var(--warn-bg);border:1px solid var(--warn-border);color:var(--accent);font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;padding:.25rem .6rem;border-radius:2px;}
+    nav a{color:var(--accent);text-decoration:none;font-size:.8rem;margin-left:1.2rem;}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:2rem;max-width:700px;margin:0 auto;}
+    .avatar{width:64px;height:64px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:1.5rem;color:#000;margin-bottom:1.2rem;}
+    .name{font-family:'Syne',sans-serif;font-weight:800;font-size:1.4rem;margin-bottom:.2rem;}
+    .meta{color:var(--muted);font-size:.78rem;margin-bottom:1.5rem;}
+    .section-title{font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:.5rem;}
+    .bio-box{background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:1rem;font-size:.85rem;line-height:1.7;margin-bottom:1.5rem;}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:.5rem;}
+    .field-label{font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:.2rem;}
+    .field-val{font-size:.85rem;}
+    .vuln-box{margin-top:1.5rem;background:var(--warn-bg);border:1px solid var(--warn-border);border-radius:6px;padding:1rem;font-size:.72rem;color:#fb923c;line-height:1.7;}
+    .vuln-box strong{display:block;margin-bottom:.3rem;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);}
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <h2>Student <span>Portal</span></h2>
+    <div style="display:flex;align-items:center;gap:1rem;">
+      <span class="badge">⚠ Vulnerable</span>
+      <nav>
+        <a href="/search">Search</a>
+        <a href="/logout">Logout</a>
+      </nav>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="avatar">{{ user.fullname[0] | upper }}</div>
+    <div class="name">{{ user.fullname }}</div>
+    <div class="meta">@{{ user.username }} · {{ user.email }}</div>
+
+    <div class="section-title">Bio</div>
+    <!-- ════════════════════════════════════════════════
+         VULNERABILITY #2 — STORED XSS
+         {{ user.bio | safe }} renders raw HTML/JS with
+         NO escaping. Any script stored at registration
+         executes here for every viewer.
+         ════════════════════════════════════════════════ -->
+    <div class="bio-box">{{ user.bio | safe }}</div>
+
+    <div class="row">
+      <div>
+        <div class="field-label">Username</div>
+        <div class="field-val">{{ user.username }}</div>
+      </div>
+      <div>
+        <div class="field-label">Password (plaintext ⚠)</div>
+        <!-- VULN #3: password visible in profile for demo -->
+        <div class="field-val" style="color:#ef4444;">{{ user.password }}</div>
+      </div>
+    </div>
+
+    <div class="vuln-box">
+      <strong>💀 Active Vulnerabilities on this page</strong>
+      • Bio is rendered with <code>| safe</code> filter — raw HTML executes<br>
+      • Password displayed in plaintext — never hashed<br>
+      • No CSRF token on any form<br>
+      • Session secret is "secret" — trivially guessable
+    </div>
+  </div>
+</body>
+</html>

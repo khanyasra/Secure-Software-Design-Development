@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Search — Vulnerable Portal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#0b0f1a;--card:#111827;--border:#1f2d45;--accent:#f97316;--text:#e2e8f0;--muted:#64748b;--danger:#ef4444;--warn-bg:#2d1a00;--warn-border:#f97316;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;min-height:100vh;padding:2rem;}
+    .topbar{display:flex;justify-content:space-between;align-items:center;max-width:700px;margin:0 auto 2rem;}
+    .topbar h2{font-family:'Syne',sans-serif;font-weight:800;font-size:1.3rem;}
+    .topbar h2 span{color:var(--accent);}
+    .badge{display:inline-block;background:var(--warn-bg);border:1px solid var(--warn-border);color:var(--accent);font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;padding:.25rem .6rem;border-radius:2px;}
+    nav a{color:var(--accent);text-decoration:none;font-size:.8rem;margin-left:1.2rem;}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:2rem;max-width:700px;margin:0 auto;}
+    .search-row{display:flex;gap:.75rem;margin-bottom:1.5rem;}
+    input[type=text]{flex:1;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:.65rem .85rem;border-radius:4px;font-family:'DM Mono',monospace;font-size:.88rem;outline:none;}
+    input:focus{border-color:var(--accent);}
+    .btn{background:var(--accent);color:#000;border:none;padding:.65rem 1.2rem;border-radius:4px;font-family:'Syne',sans-serif;font-weight:700;font-size:.88rem;cursor:pointer;}
+    table{width:100%;border-collapse:collapse;font-size:.82rem;}
+    th{text-align:left;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:.5rem .75rem;border-bottom:1px solid var(--border);}
+    td{padding:.6rem .75rem;border-bottom:1px solid rgba(31,45,69,.5);}
+    .hint{margin-top:1.5rem;background:var(--warn-bg);border:1px solid var(--warn-border);border-radius:6px;padding:1rem;font-size:.72rem;color:#fb923c;line-height:1.8;}
+    .hint strong{display:block;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;margin-bottom:.4rem;color:var(--accent);}
+    .no-results{color:var(--muted);font-size:.85rem;padding:1rem 0;}
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <h2>Student <span>Search</span></h2>
+    <div style="display:flex;align-items:center;gap:1rem;">
+      <span class="badge">⚠ Vulnerable</span>
+      <nav>
+        <a href="/profile">Profile</a>
+        <a href="/logout">Logout</a>
+      </nav>
+    </div>
+  </div>
+
+  <div class="card">
+    <form method="GET">
+      <div class="search-row">
+        <input type="text" name="q" value="{{ query }}" placeholder="Search by full name…">
+        <button class="btn" type="submit">Search</button>
+      </div>
+    </form>
+
+    {% if results %}
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th><th>Username</th><th>Full Name</th><th>Email</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in results %}
+        <tr>
+          <td>{{ r.id }}</td>
+          <td>{{ r.username }}</td>
+          <td>{{ r.fullname }}</td>
+          <td>{{ r.email }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% elif query %}
+    <div class="no-results">No results found for "{{ query }}"</div>
+    {% endif %}
+
+    <div class="hint">
+      <strong>💀 SQL Injection — UNION Attack</strong>
+      Enter in search box:<br>
+      <code>' UNION SELECT id,username,password,email FROM users--</code><br>
+      → Dumps all usernames + plaintext passwords from the database
+    </div>
+  </div>
+</body>
+</html>
